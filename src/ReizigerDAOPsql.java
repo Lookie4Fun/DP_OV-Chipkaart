@@ -1,10 +1,8 @@
-import javax.management.Query;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO{
@@ -13,6 +11,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     public ReizigerDAOPsql(Connection conn) {
         this.conn = conn;
+
     }
 
     @Override
@@ -44,7 +43,20 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public Reiziger findById(int id) {
-        return null;
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery("select * from reiziger");
+            Reiziger reiziger = null;
+            while (result.next()) {
+                if(id == result.getInt("reiziger_id")){
+                    reiziger = new Reiziger(result.getInt("reiziger_id"), result.getString("voorletters"), result.getString("tussenvoegsel"), result.getString("achternaam"), result.getDate("geboortedatum"));
+                }
+            }
+            return reiziger;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -54,6 +66,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public List<Reiziger> findAll() throws SQLException {
+        List<Reiziger> lijst = new ArrayList<>();
         try {
             Statement statement = conn.createStatement();
             ResultSet result = statement.executeQuery("select * from reiziger");
@@ -64,9 +77,25 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     tussenvoegsel = "";
                 }
                 Reiziger reiziger = new Reiziger(result.getInt("reiziger_id"), result.getString("voorletters"), tussenvoegsel, result.getString("achternaam"), result.getDate("geboortedatum"));
+                try {
+                    Statement statement2 = conn.createStatement();
+                    ResultSet adresResult = statement2.executeQuery("select * from adres");
+                    while (adresResult.next()) {
+                        try {
+                            if (reiziger.getId() == adresResult.getInt("reiziger_id")){
+                                reiziger.setAdres(new Adres(adresResult.getInt("adres_id"), adresResult.getString("postcode"), adresResult.getString("huisnummer"), adresResult.getString("straat"), adresResult.getString("woonplaats"), adresResult.getInt("reiziger_id")));
+                            }
+                        }
+                        catch (Exception e){
+                        }
+                    }
+                } catch (Exception e) {
+                }
                 reizigers.add(reiziger);
             }
+
             return reizigers;
+
         }catch (Exception e){
             System.out.println(e.getMessage());
             return null;
