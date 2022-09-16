@@ -2,32 +2,33 @@ import java.sql.*;
 import java.util.List;
 
 public class Main {
-    private Connection connection;
+    private static Connection connection = null;
 
     public static void main(String [] args) throws SQLException {
-        Connection connection = getConnection();
-        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
-        AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
+        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection());
+        AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
-        closeConnection(connection);
+        closeConnection(getConnection());
 
 
     }
 
     private static Connection getConnection(){
-        String jdbURL = "jdbc:postgresql://localhost:5432/ovchip";
-        String username = "postgres";
-        String password = "1234";
+        if(connection == null){
+            String jdbURL = "jdbc:postgresql://localhost:5432/ovchip";
+            String username = "postgres";
+            String password = "1234";
 
-        try {
-            return DriverManager.getConnection(jdbURL, username, password);
-
-        } catch (SQLException e) {
-            System.out.println("Error");
-            e.printStackTrace();
-            return null;
+            try {
+                connection = DriverManager.getConnection(jdbURL, username, password);
+            } catch (SQLException e) {
+                System.out.println("Error");
+                e.printStackTrace();
+                return null;
+            }
         }
+        return connection;
     }
 
     private static void closeConnection(Connection connection) throws SQLException {
