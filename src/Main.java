@@ -65,7 +65,7 @@ public class Main {
     private static void testAdresDAO(AdresDAO adao) throws SQLException {
         System.out.println("\n---------- Test AdresDAO -------------");
 
-       //Haal alle adressen op uit de database
+        //Haal alle adressen op uit de database
         List<Adres> adressen = adao.findAll();
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
         for (Adres a : adressen) {
