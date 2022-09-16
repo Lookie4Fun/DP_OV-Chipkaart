@@ -5,7 +5,7 @@ public class Main {
     private static Connection connection = null;
 
     public static void main(String [] args) throws SQLException {
-        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection());
+        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()));
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
@@ -54,11 +54,34 @@ public class Main {
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
+        Adres adresVanSietske = new Adres(77,"2051SA", "54", "woonstraat", "Leiden", 77);
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske);
+        rdao.save(sietske,adresVanSietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
+
+        // Update een reiziger in de database
+
+        System.out.println("[Test] resultaat voor en na updaten van achternaam op reiziger met id 77");
+        System.out.println("VOOR UPDATE");
+        for (Reiziger r: reizigers) {
+            System.out.println(r);
+        }
+        rdao.update(sietske, "Jansen");
+        System.out.println("\nNA UPDATE");
+        reizigers = rdao.findAll();
+        for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+
+//        // Delete een reiziger uit de database
+//        rdao.delete(sietske);
+//        System.out.println("\n[Test] resultaat na deleten van reiziger op adres met id 77");
+//        reizigers = rdao.findAll();
+//        for (Reiziger r : reizigers) {
+//            System.out.println(r);
+//        }
 
     }
 
@@ -81,12 +104,13 @@ public class Main {
         System.out.println(adressen.size() + " adressen\n");
 
         // Update een adres in de database
-        adao.update(nieuwadres);
+
         System.out.println("[Test] resultaat voor en na updaten van postcode op adres met id 77");
         System.out.println("VOOR UPDATE");
         for (Adres a : adressen) {
             System.out.println(a);
         }
+        adao.update(nieuwadres);
         System.out.println("\nNA UPDATE");
         adressen = adao.findAll();
         for (Adres a : adressen) {
@@ -103,7 +127,7 @@ public class Main {
 
         //FindByReiziger
         System.out.println("\n[Test] resultaat na FindByReiziger op reiziger met id 1");
-        ReizigerDAO reizigerDAO = new ReizigerDAOPsql(getConnection());
+        ReizigerDAO reizigerDAO = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()));
 
         System.out.println(adao.findByReiziger(reizigerDAO.findById(1)));
 

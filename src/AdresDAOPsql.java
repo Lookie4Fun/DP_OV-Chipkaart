@@ -8,34 +8,11 @@ import java.util.List;
 public class AdresDAOPsql implements AdresDAO {
 
     private Connection conn;
-    private ReizigerDAO rdao;
 
-
-
-
-    public AdresDAOPsql(Connection conn){
+    public AdresDAOPsql(Connection conn) {
         this.conn = conn;
-        try {
-            Statement statement = conn.createStatement();
-            ResultSet result = statement.executeQuery("select * from adres");
-            ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(conn);
-            List<Reiziger> reizigers = reizigerDAOPsql.findAll();
-            while (result.next()) {
-                    try {
-
-                        for(Reiziger r : reizigers){
-                            if (r.getId() == result.getInt("reiziger_id")){
-                                r.setAdres(new Adres(result.getInt("adres_id"), result.getString("postcode"), result.getString("huisnummer"), result.getString("straat"), result.getString("woonplaats"), result.getInt("reiziger_id")));
-                            }
-                        }
-                    }
-                    catch (Exception e){
-
-                    }
-                }
-            } catch (Exception e) {
-        }
     }
+
 
     @Override
     public boolean save(Adres adres) throws SQLException {

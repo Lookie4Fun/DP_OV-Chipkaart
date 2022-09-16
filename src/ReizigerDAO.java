@@ -2,9 +2,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ReizigerDAO {
-    boolean save(Reiziger reiziger) throws SQLException;
+    boolean save(Reiziger reiziger,Adres adres) throws SQLException;
 
-    boolean update(Reiziger reiziger);
+    boolean update(Reiziger reiziger, String nieuwachternaam);
 
     boolean delete(Reiziger reiziger);
 
