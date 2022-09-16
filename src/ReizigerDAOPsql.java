@@ -12,6 +12,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     public ReizigerDAOPsql(Connection conn, AdresDAOPsql adresDAOPsql) {
         this.conn = conn;
+        this.adresDAOPsql = adresDAOPsql;
 
     }
 
@@ -23,8 +24,8 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     "INSERT INTO reiziger"
                     +"(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum)"
                     +"values ('"+reiziger.getId()+"','"+reiziger.getVoorletters()+"','"+reiziger.getTussenvoegsel()+"','"+reiziger.getAchternaam()+"','"+reiziger.getGeboortedatum()+"')";
-
             statement.executeQuery(query);
+            adresDAOPsql.save(adres);
             return true;
 
         }catch (Exception e){

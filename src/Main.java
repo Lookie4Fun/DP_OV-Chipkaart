@@ -1,12 +1,14 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     private static Connection connection = null;
 
     public static void main(String [] args) throws SQLException {
-        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()));
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
+        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),adresDAOPsql);
+
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
         closeConnection(getConnection());
@@ -62,7 +64,6 @@ public class Main {
 
 
         // Update een reiziger in de database
-
         System.out.println("[Test] resultaat voor en na updaten van achternaam op reiziger met id 77");
         System.out.println("VOOR UPDATE");
         for (Reiziger r: reizigers) {
@@ -72,6 +73,13 @@ public class Main {
         System.out.println("\nNA UPDATE");
         reizigers = rdao.findAll();
         for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+
+        //zoeken op geboorte datum
+        System.out.println("\n[Test] resultaat zoeken op geboortedatum:2002-12-03");
+        List<Reiziger> gbReizigers = new ArrayList<Reiziger>(rdao.findByGbdatum("2002-12-03"));
+        for(Reiziger r : gbReizigers){
             System.out.println(r);
         }
 
