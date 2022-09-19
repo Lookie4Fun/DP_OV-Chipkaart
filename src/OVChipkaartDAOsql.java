@@ -88,6 +88,21 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
 
     @Override
     public List<OVChipkaart> findByReiziger(Reiziger reiziger) {
-        return null;
+        List<OVChipkaart> kaarten = new ArrayList<>();
+        try {
+            String query ="select * from ov_chipkaart where reiziger_id = ?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, reiziger.getId());
+            ResultSet result = pst.executeQuery();
+            while (result.next()) {
+                OVChipkaart kaart = new OVChipkaart(result.getInt("kaart_nummer"), result.getDate("geldig_tot"), result.getInt("klasse"), result.getInt("saldo"), result.getInt("reiziger_id"));
+                kaarten.add(kaart);
+            }
+            return kaarten;
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

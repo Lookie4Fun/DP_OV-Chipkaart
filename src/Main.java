@@ -154,8 +154,6 @@ public class Main {
             System.out.println(k);
         }
 
-
-
         // Maak een OVChipkaart aan en persisteer deze in de database
         String kaartdatum = "2028-09-08";
         OVChipkaart ovChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum),2,40,1);
@@ -164,7 +162,7 @@ public class Main {
         kaarten = ovdao.findAll();
         System.out.println(kaarten.size() + " kaarten\n");
 
-        // Update een adres in de database
+        // Update een ovkaart in de database
         System.out.println("[Test] resultaat voor en na updaten van ovkaart met kaartnummer 2403711");
         System.out.println("VOOR UPDATE");
         for (OVChipkaart k : kaarten) {
@@ -177,10 +175,18 @@ public class Main {
             System.out.println(k);
         }
 
-        // Delete een adres uit de database
+        // Delete een ovkaart uit de database
         ovdao.delete(ovChipkaart);
         System.out.println("\n[Test] resultaat na deleten van OVChipkaart met kaartnummer 2403711");
         kaarten = ovdao.findAll();
+        for (OVChipkaart k : kaarten) {
+            System.out.println(k);
+        }
+
+        //vind een ovkaart via de reiziger
+        System.out.println("\n[Test] resultaat na zoeken via reiziger");
+        Reiziger sietske = new Reiziger(2, "S", "", "Boers", java.sql.Date.valueOf("1981-03-14"));
+        kaarten = ovdao.findByReiziger(sietske);
         for (OVChipkaart k : kaarten) {
             System.out.println(k);
         }
