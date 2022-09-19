@@ -9,15 +9,17 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     private Connection conn;
     private AdresDAOPsql adresDAOPsql;
+    private OVChipkaartDAOsql ovChipkaartDAOsql;
 
-    public ReizigerDAOPsql(Connection conn, AdresDAOPsql adresDAOPsql) {
+    public ReizigerDAOPsql(Connection conn, AdresDAOPsql adresDAOPsql, OVChipkaartDAOsql ovChipkaartDAOsql) {
         this.conn = conn;
         this.adresDAOPsql = adresDAOPsql;
+        this.ovChipkaartDAOsql = ovChipkaartDAOsql;
 
     }
 
     @Override
-    public boolean save(Reiziger reiziger, Adres adres) throws SQLException {
+    public boolean save(Reiziger reiziger, Adres adres, OVChipkaart ovChipkaart) throws SQLException {
         try {
             Statement statement = conn.createStatement();
             String query = "" +
@@ -26,6 +28,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     +"values ('"+reiziger.getId()+"','"+reiziger.getVoorletters()+"','"+reiziger.getTussenvoegsel()+"','"+reiziger.getAchternaam()+"','"+reiziger.getGeboortedatum()+"')";
             statement.executeQuery(query);
             adresDAOPsql.save(adres);
+            ovChipkaartDAOsql.save(ovChipkaart);
             return true;
 
         }catch (Exception e){

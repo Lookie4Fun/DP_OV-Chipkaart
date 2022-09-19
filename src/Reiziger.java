@@ -1,5 +1,7 @@
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Reiziger {
     private int id;
@@ -8,6 +10,7 @@ public class Reiziger {
     private String achternaam;
     private java.sql.Date geboortedatum;
     private Adres adres;
+    private List<OVChipkaart> OVChipkaarten;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -15,6 +18,14 @@ public class Reiziger {
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboortedatum = geboortedatum;
+        this.OVChipkaarten = new ArrayList<OVChipkaart>();
+    }
+
+    public void addOVChipkaart(OVChipkaart kaart){
+        OVChipkaarten.add(kaart);
+    }
+    public void removeOVChipkaart(OVChipkaart kaart){
+        OVChipkaarten.remove(kaart);
     }
 
     public int getId() {
@@ -63,6 +74,18 @@ public class Reiziger {
 
     public void setAdres(Adres adres) {
         this.adres = adres;
+    }
+
+    public void setGeboortedatum(Date geboortedatum) {
+        this.geboortedatum = geboortedatum;
+    }
+
+    public List<OVChipkaart> getOVChipkaarten() {
+        return OVChipkaarten;
+    }
+
+    public void setOVChipkaarten(List<OVChipkaart> OVChipkaarten) {
+        this.OVChipkaarten = OVChipkaarten;
     }
 
     public String toString(){

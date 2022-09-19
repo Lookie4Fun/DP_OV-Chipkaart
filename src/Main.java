@@ -6,11 +6,13 @@ public class Main {
     private static Connection connection = null;
 
     public static void main(String [] args) throws SQLException {
+        OVChipkaartDAOsql ovChipkaartDAOsql = new OVChipkaartDAOsql(getConnection());
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
-        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),adresDAOPsql);
+        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),adresDAOPsql,ovChipkaartDAOsql);
 
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
+        testOVChipkaartDAO(ovChipkaartDAOsql);
         closeConnection(getConnection());
 
 
@@ -55,10 +57,12 @@ public class Main {
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
+        String kaartdatum = "2028-09-19";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
         Adres adresVanSietske = new Adres(77,"2051SA", "54", "woonstraat", "Leiden", 77);
+        OVChipkaart ovChipkaart = new OVChipkaart(132546,java.sql.Date.valueOf(kaartdatum),2,30,77);
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske,adresVanSietske);
+        rdao.save(sietske,adresVanSietske,ovChipkaart);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
@@ -102,7 +106,6 @@ public class Main {
         for (Adres a : adressen) {
             System.out.println(a);
         }
-        System.out.println();
 
         // Maak een nieuwe adres aan en persisteer deze in de database
         Adres nieuwadres = new Adres(77,"1234XZ", "12", "huislaan", "Amsterdam", 77);
@@ -112,7 +115,6 @@ public class Main {
         System.out.println(adressen.size() + " adressen\n");
 
         // Update een adres in de database
-
         System.out.println("[Test] resultaat voor en na updaten van postcode op adres met id 77");
         System.out.println("VOOR UPDATE");
         for (Adres a : adressen) {
@@ -135,10 +137,53 @@ public class Main {
 
         //FindByReiziger
         System.out.println("\n[Test] resultaat na FindByReiziger op reiziger met id 1");
-        ReizigerDAO reizigerDAO = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()));
+        ReizigerDAO reizigerDAO = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()),new OVChipkaartDAOsql(getConnection()));
 
         System.out.println(adao.findByReiziger(reizigerDAO.findById(1)));
 
+
+    }
+
+    private static void testOVChipkaartDAO(OVChipkaartDAO ovdao)throws SQLException{
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+        // Haal alle ovkaarten op uit de database
+        List<OVChipkaart> kaarten = ovdao.findAll();
+        System.out.println("[Test] OVChipkaart.findAll() geeft de volgende kaarten:");
+        for (OVChipkaart k : kaarten) {
+            System.out.println(k);
+        }
+
+
+
+        // Maak een OVChipkaart aan en persisteer deze in de database
+        String kaartdatum = "2028-09-08";
+        OVChipkaart ovChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum),2,40,1);
+        System.out.print("\n [Test] Eerst " + kaarten.size() + "kaarten, na OVChipkaartDAO.save() ");
+        ovdao.save(ovChipkaart);
+        kaarten = ovdao.findAll();
+        System.out.println(kaarten.size() + " kaarten\n");
+
+        // Update een adres in de database
+        System.out.println("[Test] resultaat voor en na updaten van ovkaart met kaartnummer 2403711");
+        System.out.println("VOOR UPDATE");
+        for (OVChipkaart k : kaarten) {
+            System.out.println(k);
+        }
+        ovdao.update(ovChipkaart, 50);
+        System.out.println("\nNA UPDATE");
+        kaarten = ovdao.findAll();
+        for (OVChipkaart k : kaarten) {
+            System.out.println(k);
+        }
+
+        // Delete een adres uit de database
+        ovdao.delete(ovChipkaart);
+        System.out.println("\n[Test] resultaat na deleten van OVChipkaart met kaartnummer 2403711");
+        kaarten = ovdao.findAll();
+        for (OVChipkaart k : kaarten) {
+            System.out.println(k);
+        }
 
     }
 }
