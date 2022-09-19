@@ -97,6 +97,7 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
             while (result.next()) {
                 OVChipkaart kaart = new OVChipkaart(result.getInt("kaart_nummer"), result.getDate("geldig_tot"), result.getInt("klasse"), result.getInt("saldo"), result.getInt("reiziger_id"));
                 kaarten.add(kaart);
+                reiziger.setOVChipkaarten(kaarten);
             }
             return kaarten;
 

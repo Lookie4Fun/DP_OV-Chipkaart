@@ -184,7 +184,7 @@ public class Main {
         }
 
         //vind een ovkaart via de reiziger
-        System.out.println("\n[Test] resultaat na zoeken via reiziger");
+        System.out.println("\n[Test] resultaat na zoeken via reiziger met reiziger_id 2");
         Reiziger sietske = new Reiziger(2, "S", "", "Boers", java.sql.Date.valueOf("1981-03-14"));
         kaarten = ovdao.findByReiziger(sietske);
         for (OVChipkaart k : kaarten) {
