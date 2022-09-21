@@ -33,26 +33,27 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
     }
 
     @Override
-    public boolean save(OVChipkaart kaart) throws SQLException {
-        try {
-            String query =
-                    "INSERT INTO ov_chipkaart"
-                    +"(kaart_nummer, geldig_tot, klasse, saldo, reiziger_id)"
-                    +"values (?,?,?,?,?)";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.setInt(1, kaart.getKaart_nummer());
-            pst.setDate(2, kaart.getGeldig_tot());
-            pst.setInt(3, kaart.getKlasse());
-            pst.setInt(4, kaart.getSaldo());
-            pst.setInt(5, kaart.getReiziger_id());
+    public boolean save(List<OVChipkaart> kaarten) throws SQLException {
+            try {
+                for(OVChipkaart kaart : kaarten) {
+                    String query =
+                            "INSERT INTO ov_chipkaart"
+                                    + "(kaart_nummer, geldig_tot, klasse, saldo, reiziger_id)"
+                                    + "values (?,?,?,?,?)";
+                    PreparedStatement pst = conn.prepareStatement(query);
+                    pst.setInt(1, kaart.getKaart_nummer());
+                    pst.setDate(2, kaart.getGeldig_tot());
+                    pst.setInt(3, kaart.getKlasse());
+                    pst.setInt(4, kaart.getSaldo());
+                    pst.setInt(5, kaart.getReiziger_id());
 
-            pst.executeQuery();
-            return true;
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return false;
-        }
+                    pst.executeQuery();
+                }
+                return true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return false;
+            }
     }
 
     @Override
@@ -97,8 +98,8 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
             while (result.next()) {
                 OVChipkaart kaart = new OVChipkaart(result.getInt("kaart_nummer"), result.getDate("geldig_tot"), result.getInt("klasse"), result.getInt("saldo"), result.getInt("reiziger_id"));
                 kaarten.add(kaart);
-                reiziger.setOVChipkaarten(kaarten);
             }
+            reiziger.setOVChipkaarten(kaarten);
             return kaarten;
 
         }catch (Exception e){

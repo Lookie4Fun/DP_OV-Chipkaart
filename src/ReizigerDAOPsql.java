@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     }
 
     @Override
-    public boolean save(Reiziger reiziger, Adres adres, OVChipkaart ovChipkaart) throws SQLException {
+    public boolean save(Reiziger reiziger) throws SQLException {
         try {
             Statement statement = conn.createStatement();
             String query = "" +
@@ -27,8 +24,8 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     +"(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum)"
                     +"values ('"+reiziger.getId()+"','"+reiziger.getVoorletters()+"','"+reiziger.getTussenvoegsel()+"','"+reiziger.getAchternaam()+"','"+reiziger.getGeboortedatum()+"')";
             statement.executeQuery(query);
-            adresDAOPsql.save(adres);
-            ovChipkaartDAOsql.save(ovChipkaart);
+            adresDAOPsql.save(reiziger.getAdres());
+            ovChipkaartDAOsql.save(reiziger.getOVChipkaarten());
             return true;
 
         }catch (Exception e){
@@ -105,10 +102,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     @Override
     public List<Reiziger> findAll() throws SQLException {
-        List<Reiziger> lijst = new ArrayList<>();
         try {
-            Statement statement = conn.createStatement();
-            ResultSet result = statement.executeQuery("select * from reiziger");
+            String query = "select * from reiziger;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet result = pst.executeQuery();
             List<Reiziger> reizigers = new ArrayList<>();
             while (result.next()) {
                 String tussenvoegsel = result.getString("tussenvoegsel");
@@ -117,12 +114,33 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 }
                 Reiziger reiziger = new Reiziger(result.getInt("reiziger_id"), result.getString("voorletters"), tussenvoegsel, result.getString("achternaam"), result.getDate("geboortedatum"));
                 try {
-                    Statement statement2 = conn.createStatement();
-                    ResultSet adresResult = statement2.executeQuery("select * from adres");
+                    String adresQuery ="select * from adres where reiziger_id = ?;";
+                    PreparedStatement adresPst = conn.prepareStatement(adresQuery);
+                    adresPst.setInt(1, reiziger.getId());
+                    ResultSet adresResult = adresPst.executeQuery();
                     while (adresResult.next()) {
                         try {
                             if (reiziger.getId() == adresResult.getInt("reiziger_id")){
                                 reiziger.setAdres(new Adres(adresResult.getInt("adres_id"), adresResult.getString("postcode"), adresResult.getString("huisnummer"), adresResult.getString("straat"), adresResult.getString("woonplaats"), adresResult.getInt("reiziger_id")));
+                            }
+                        }
+                        catch (Exception e){
+                        }
+                    }
+                } catch (Exception e) {
+                }
+
+                try {
+                    String ovQuery ="select * from ov_chipkaart where reiziger_id = ?;";
+                    PreparedStatement ovPst = conn.prepareStatement(ovQuery);
+                    ovPst.setInt(1, reiziger.getId());
+                    ResultSet ovResult = ovPst.executeQuery();
+                    while (ovResult.next()) {
+                        try {
+                            if (reiziger.getId() == ovResult.getInt("reiziger_id")){
+                                OVChipkaart kaart = new OVChipkaart(ovResult.getInt("kaart_nummer"), ovResult.getDate("geldig_tot"), ovResult.getInt("klasse"), ovResult.getInt("saldo"), ovResult.getInt("reiziger_id"));
+                                reiziger.addOVChipkaart(kaart);
+
                             }
                         }
                         catch (Exception e){

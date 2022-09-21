@@ -3,7 +3,7 @@ import java.util.List;
 
 public interface ReizigerDAO {
 
-    boolean save(Reiziger reiziger, Adres adres, OVChipkaart ovChipkaart) throws SQLException;
+    boolean save(Reiziger reiziger) throws SQLException;
 
     boolean update(Reiziger reiziger, String nieuwachternaam);
 

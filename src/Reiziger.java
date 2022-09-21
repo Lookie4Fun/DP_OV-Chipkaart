@@ -18,7 +18,7 @@ public class Reiziger {
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboortedatum = geboortedatum;
-        this.OVChipkaarten = this.getOVChipkaarten();
+        this.OVChipkaarten = new ArrayList<OVChipkaart>();
     }
 
     public void addOVChipkaart(OVChipkaart kaart){
@@ -89,6 +89,6 @@ public class Reiziger {
     }
 
     public String toString(){
-        return "reiziger #"+id+": "+voorletters+". "+tussenvoegsel+" "+achternaam+", geboren op "+geboortedatum+", Adres"+getAdres();
+        return "reiziger #"+id+": "+voorletters+". "+tussenvoegsel+" "+achternaam+", geboren op "+geboortedatum+", Adres"+getAdres()+" ovchipkaarten:"+getOVChipkaarten();
     }
 }

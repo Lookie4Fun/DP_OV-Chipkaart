@@ -57,12 +57,9 @@ public class Main {
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
-        String kaartdatum = "2028-09-19";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        Adres adresVanSietske = new Adres(77,"2051SA", "54", "woonstraat", "Leiden", 77);
-        OVChipkaart ovChipkaart = new OVChipkaart(132546,java.sql.Date.valueOf(kaartdatum),2,30,77);
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske,adresVanSietske,ovChipkaart);
+        rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
@@ -155,10 +152,12 @@ public class Main {
         }
 
         // Maak een OVChipkaart aan en persisteer deze in de database
+        List<OVChipkaart> ovChipkaarten = new ArrayList<>();
         String kaartdatum = "2028-09-08";
         OVChipkaart ovChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum),2,40,1);
         System.out.print("\n [Test] Eerst " + kaarten.size() + "kaarten, na OVChipkaartDAO.save() ");
-        ovdao.save(ovChipkaart);
+        ovChipkaarten.add(ovChipkaart);
+        ovdao.save(ovChipkaarten);
         kaarten = ovdao.findAll();
         System.out.println(kaarten.size() + " kaarten\n");
 

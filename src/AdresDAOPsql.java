@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +64,13 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public Adres findByReiziger(Reiziger reiziger) {
         try {
-            Statement statement = conn.createStatement();
-            ResultSet result = statement.executeQuery("select * from adres");
+            String query = "select * from adres where reiziger_id = ?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, reiziger.getId());
+            ResultSet result = pst.executeQuery();
             Adres adres = null;
             while (result.next()) {
-                if(reiziger.getId() == result.getInt("reiziger_id")){
-                     adres = new Adres(result.getInt("adres_id"), result.getString("postcode"), result.getString("huisnummer"), result.getString("straat"), result.getString("woonplaats"), result.getInt("reiziger_id"));
-                }
+                adres = new Adres(result.getInt("adres_id"), result.getString("postcode"), result.getString("huisnummer"), result.getString("straat"), result.getString("woonplaats"), result.getInt("reiziger_id"));
             }
             return adres;
         }catch (Exception e){
