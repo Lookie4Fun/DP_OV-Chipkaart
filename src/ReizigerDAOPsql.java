@@ -155,9 +155,11 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                             }
                         }
                         catch (Exception e){
+                            System.out.println(e.getMessage());
                         }
                     }
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
                 reizigers.add(reiziger);
             }

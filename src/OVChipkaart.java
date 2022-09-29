@@ -1,4 +1,6 @@
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OVChipkaart {
     private int kaart_nummer;
@@ -6,6 +8,7 @@ public class OVChipkaart {
     private int klasse;
     private int saldo;
     private int reiziger_id;
+    private List<Product> producten;
 
     public OVChipkaart(int kaart_nummer, Date geldig_tot, int klasse, int saldo, int reiziger_id){
         this.kaart_nummer = kaart_nummer;
@@ -13,7 +16,10 @@ public class OVChipkaart {
         this.klasse = klasse;
         this.saldo = saldo;
         this.reiziger_id = reiziger_id;
+        producten = new ArrayList<>();
     }
+
+
 
     public int getKaart_nummer() {
         return kaart_nummer;
@@ -55,7 +61,22 @@ public class OVChipkaart {
         this.reiziger_id = reiziger_id;
     }
 
+    public List<Product> getProducten() {
+        return producten;
+    }
+
+    public void setProducten(List<Product> producten) {
+        this.producten = producten;
+    }
+
+    public void addProduct(Product product){
+        producten.add(product);
+    }
+    public void removeProduct(Product product){
+        producten.remove(product);
+    }
+
     public String toString(){
-        return " kaart:#"+kaart_nummer+", geldig tot "+geldig_tot+", klasse:"+klasse+", saldo: €"+saldo+", reiziger:"+ reiziger_id;
+        return " kaart #"+kaart_nummer+" van reiziger:"+ reiziger_id+": geldig tot "+geldig_tot+", klasse:"+klasse+", saldo: €"+saldo+", producten"+ getProducten();
     }
 }

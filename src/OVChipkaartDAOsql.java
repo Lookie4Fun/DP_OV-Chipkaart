@@ -22,8 +22,36 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
             ResultSet result = pst.executeQuery();
             while (result.next()) {
                 OVChipkaart kaart = new OVChipkaart(result.getInt("kaart_nummer"), result.getDate("geldig_tot"), result.getInt("klasse"), result.getInt("saldo"), result.getInt("reiziger_id"));
+
+                try {
+                    String chipkaart_productQuery ="select * from ov_chipkaart_product where kaart_nummer = ?;";
+                    PreparedStatement chipkaart_productPst = conn.prepareStatement(chipkaart_productQuery);
+                    chipkaart_productPst.setInt(1, kaart.getKaart_nummer());
+                    ResultSet chipkaart_productResult = chipkaart_productPst.executeQuery();
+                    while (chipkaart_productResult.next()) {
+                        try {
+                            String productQuery ="select * from product where product_nummer = ?;";
+                            PreparedStatement productPst = conn.prepareStatement(productQuery);
+                            productPst.setInt(1, chipkaart_productResult.getInt("product_nummer"));
+                            ResultSet productResult = productPst.executeQuery();
+                            while (productResult.next()) {
+                                try {
+                                    kaart.addProduct(new Product(productResult.getInt("product_nummer"),productResult.getString("naam"),productResult.getString("beschrijving"),productResult.getInt("prijs")));
+                                }catch (Exception e){
+                                    System.out.println(e);
+                                }
+                            }
+                        }
+                        catch (Exception e){
+                            System.out.println(e);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println();
+                }
                 kaarten.add(kaart);
             }
+
             return kaarten;
 
         }catch (Exception e){
@@ -78,13 +106,25 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
     @Override
     public boolean delete(OVChipkaart kaart) {
         try {
-            String query ="DELETE FROM ov_chipkaart WHERE kaart_nummer =?;";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.setInt(1, kaart.getKaart_nummer());
-            pst.executeQuery();
-            return true;
+            try {
+                String query2 ="delete from ov_chipkaart_product where kaart_nummer=?;";
+                PreparedStatement pst2 = conn.prepareStatement(query2);
+                pst2.setInt(1, kaart.getKaart_nummer());
+                pst2.executeQuery();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
 
-        }catch (Exception e){
+            try {
+                String query = "DELETE FROM ov_chipkaart WHERE kaart_nummer =?;";
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.setInt(1, kaart.getKaart_nummer());
+                pst.executeQuery();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            return true;
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
         }

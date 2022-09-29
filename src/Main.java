@@ -10,10 +10,12 @@ public class Main {
         OVChipkaartDAOsql ovChipkaartDAOsql = new OVChipkaartDAOsql(getConnection());
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
         ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),adresDAOPsql,ovChipkaartDAOsql);
+        ProductDAOsql productDAOsql = new ProductDAOsql(getConnection());
 
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
         testOVChipkaartDAO(ovChipkaartDAOsql);
+        testProductDAO(productDAOsql);
         closeConnection(getConnection());
 
 
@@ -67,12 +69,12 @@ public class Main {
 
         // Update een reiziger in de database
         System.out.println("[Test] resultaat voor en na updaten van achternaam op reiziger met id 77");
-        Reiziger sietske2 = new Reiziger(77, "S", "van", "Steen", java.sql.Date.valueOf(gbdatum));
+        Reiziger updateSietske = new Reiziger(77, "S", "van", "Steen", java.sql.Date.valueOf(gbdatum));
         System.out.println("VOOR UPDATE");
         for (Reiziger r: reizigers) {
             System.out.println(r);
         }
-        rdao.update(sietske2);
+        rdao.update(updateSietske);
         System.out.println("\nNA UPDATE");
         reizigers = rdao.findAll();
         for (Reiziger r : reizigers) {
@@ -116,12 +118,12 @@ public class Main {
 
         // Update een adres in de database
         System.out.println("[Test] resultaat voor en na updaten van postcode op adres met id 77");
-        Adres nieuwadres2 = new Adres(77,"1234FL", "21", "Brugweg", "Rotterdam", 77);
+        Adres updateAdres = new Adres(77,"1234FL", "21", "Brugweg", "Rotterdam", 77);
         System.out.println("VOOR UPDATE");
         for (Adres a : adressen) {
             System.out.println(a);
         }
-        adao.update(nieuwadres2);
+        adao.update(updateAdres);
         System.out.println("\nNA UPDATE");
         adressen = adao.findAll();
         for (Adres a : adressen) {
@@ -168,12 +170,12 @@ public class Main {
         // Update een ovkaart in de database
         System.out.println("[Test] resultaat voor en na updaten van ovkaart met kaartnummer 2403711");
         String kaartdatum2 = "2029-09-08";
-        OVChipkaart ovChipkaart2 = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum2),2,150,1);
+        OVChipkaart updateOvChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum2),2,150,1);
         System.out.println("VOOR UPDATE");
         for (OVChipkaart k : kaarten) {
             System.out.println(k);
         }
-        ovdao.update(ovChipkaart2);
+        ovdao.update(updateOvChipkaart);
         System.out.println("\nNA UPDATE");
         kaarten = ovdao.findAll();
         for (OVChipkaart k : kaarten) {
@@ -194,6 +196,54 @@ public class Main {
         kaarten = ovdao.findByReiziger(sietske);
         for (OVChipkaart k : kaarten) {
             System.out.println(k);
+        }
+
+    }
+
+    private static void testProductDAO(ProductDAO pdao) throws SQLException {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+        // Haal alle producten op uit de database
+        List<Product> producten = pdao.findAll();
+        System.out.println("[Test] Product.findAll() geeft de volgende producten:");
+        for (Product p : producten) {
+            System.out.println(p);
+        }
+
+        // Maak een product aan en persisteer deze in de database
+        Product nieuwProduct = new Product(7,"Vertragings garantie", "5 dagen per week vertraging.", 20);
+        System.out.print("\n [Test] Eerst " + producten.size() + " producten, na ProductDAO.save() ");
+        pdao.save(nieuwProduct);
+        producten = pdao.findAll();
+        System.out.println(producten.size() + " producten\n");
+
+        // Update een product in de database
+        System.out.println("[Test] resultaat voor en na updaten van product met productnummer 7");
+        Product updateProduct = new Product(7,"7 dagen Vertragings garantie", "7 dagen per week vertraging.", 150);
+        System.out.println("VOOR UPDATE");
+        for (Product p : producten) {
+            System.out.println(p);
+        }
+        pdao.update(updateProduct);
+        System.out.println("\nNA UPDATE");
+        producten = pdao.findAll();
+        for (Product p : producten) {
+            System.out.println(p);
+        }
+
+        // Delete een adres uit de database
+        pdao.delete(nieuwProduct);
+        System.out.println("\n[Test] resultaat na deleten van product met productnummer 7");
+        producten = pdao.findAll();
+        for (Product p : producten) {
+            System.out.println(p);
+        }
+
+        //Find by ovchipkaart
+        System.out.println("\n[Test] resultaat  findByOVChipkaart op ovChipkaart met kaartnummer 35283");
+        OVChipkaart test = new OVChipkaart(35283,java.sql.Date.valueOf("2018-05-31"),2, 25,2);
+        for(Product p :  pdao.findByOVChipkaart(test)){
+            System.out.println(p);
         }
 
     }
