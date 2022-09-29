@@ -57,12 +57,15 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
     }
 
     @Override
-    public boolean update(OVChipkaart kaart, int saldo) {
+    public boolean update(OVChipkaart kaart) {
         try {
-            String query ="update ov_chipkaart set saldo =? where kaart_nummer =?;";
+            String query ="update ov_chipkaart set geldig_tot =?, klasse=?, saldo=?, reiziger_id=? where kaart_nummer =?;";
             PreparedStatement pst = conn.prepareStatement(query);
-            pst.setInt(1, saldo);
-            pst.setInt(2, kaart.getKaart_nummer());
+            pst.setDate(1, kaart.getGeldig_tot());
+            pst.setInt(2, kaart.getKlasse());
+            pst.setInt(3, kaart.getSaldo());
+            pst.setInt(4, kaart.getReiziger_id());
+            pst.setInt(5, kaart.getKaart_nummer());
             pst.executeQuery();
             return true;
 

@@ -7,7 +7,7 @@ public interface OVChipkaartDAO {
 
     boolean save(List<OVChipkaart> kaart) throws SQLException;
 
-    boolean update(OVChipkaart kaart, int saldo);
+    boolean update(OVChipkaart kaart);
 
     boolean delete(OVChipkaart kaart);
 

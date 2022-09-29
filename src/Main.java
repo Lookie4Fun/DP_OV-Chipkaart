@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -58,7 +59,7 @@ public class Main {
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        System.out.print("\n[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
@@ -66,11 +67,12 @@ public class Main {
 
         // Update een reiziger in de database
         System.out.println("[Test] resultaat voor en na updaten van achternaam op reiziger met id 77");
+        Reiziger sietske2 = new Reiziger(77, "S", "van", "Steen", java.sql.Date.valueOf(gbdatum));
         System.out.println("VOOR UPDATE");
         for (Reiziger r: reizigers) {
             System.out.println(r);
         }
-        rdao.update(sietske, "Jansen");
+        rdao.update(sietske2);
         System.out.println("\nNA UPDATE");
         reizigers = rdao.findAll();
         for (Reiziger r : reizigers) {
@@ -79,12 +81,13 @@ public class Main {
 
         //zoeken op geboorte datum
         System.out.println("\n[Test] resultaat zoeken op geboortedatum:2002-12-03");
-        List<Reiziger> gbReizigers = new ArrayList<Reiziger>(rdao.findByGbdatum("2002-12-03"));
+        List<Reiziger> gbReizigers = rdao.findByGbdatum("2002-12-03");
         for(Reiziger r : gbReizigers){
             System.out.println(r);
         }
 
-//        // Delete een reiziger uit de database
+
+        // Delete een reiziger uit de database
 //        rdao.delete(sietske);
 //        System.out.println("\n[Test] resultaat na deleten van reiziger op adres met id 77");
 //        reizigers = rdao.findAll();
@@ -106,18 +109,19 @@ public class Main {
 
         // Maak een nieuwe adres aan en persisteer deze in de database
         Adres nieuwadres = new Adres(77,"1234XZ", "12", "huislaan", "Amsterdam", 77);
-        System.out.print("[Test] Eerst " + adressen.size() + " adressen, na adresDAO.save() ");
+        System.out.print("\n[Test] Eerst " + adressen.size() + " adressen, na adresDAO.save() ");
         adao.save(nieuwadres);
         adressen = adao.findAll();
         System.out.println(adressen.size() + " adressen\n");
 
         // Update een adres in de database
         System.out.println("[Test] resultaat voor en na updaten van postcode op adres met id 77");
+        Adres nieuwadres2 = new Adres(77,"1234FL", "21", "Brugweg", "Rotterdam", 77);
         System.out.println("VOOR UPDATE");
         for (Adres a : adressen) {
             System.out.println(a);
         }
-        adao.update(nieuwadres);
+        adao.update(nieuwadres2);
         System.out.println("\nNA UPDATE");
         adressen = adao.findAll();
         for (Adres a : adressen) {
@@ -155,7 +159,7 @@ public class Main {
         List<OVChipkaart> ovChipkaarten = new ArrayList<>();
         String kaartdatum = "2028-09-08";
         OVChipkaart ovChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum),2,40,1);
-        System.out.print("\n [Test] Eerst " + kaarten.size() + "kaarten, na OVChipkaartDAO.save() ");
+        System.out.print("\n [Test] Eerst " + kaarten.size() + " kaarten, na OVChipkaartDAO.save() ");
         ovChipkaarten.add(ovChipkaart);
         ovdao.save(ovChipkaarten);
         kaarten = ovdao.findAll();
@@ -163,11 +167,13 @@ public class Main {
 
         // Update een ovkaart in de database
         System.out.println("[Test] resultaat voor en na updaten van ovkaart met kaartnummer 2403711");
+        String kaartdatum2 = "2029-09-08";
+        OVChipkaart ovChipkaart2 = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum2),2,150,1);
         System.out.println("VOOR UPDATE");
         for (OVChipkaart k : kaarten) {
             System.out.println(k);
         }
-        ovdao.update(ovChipkaart, 50);
+        ovdao.update(ovChipkaart2);
         System.out.println("\nNA UPDATE");
         kaarten = ovdao.findAll();
         for (OVChipkaart k : kaarten) {

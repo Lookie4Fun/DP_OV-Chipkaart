@@ -1,3 +1,4 @@
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -5,7 +6,7 @@ public interface ReizigerDAO {
 
     boolean save(Reiziger reiziger) throws SQLException;
 
-    boolean update(Reiziger reiziger, String nieuwachternaam);
+    boolean update(Reiziger reiziger);
 
     boolean delete(Reiziger reiziger);
 

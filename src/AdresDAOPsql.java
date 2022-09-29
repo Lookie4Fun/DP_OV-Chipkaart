@@ -31,12 +31,15 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public boolean update(Adres adres) {
         try {
-            Statement statement = conn.createStatement();
-            String query =
-                    "update adres set postcode='2403JD' where adres_id='"+adres.getId()+"'";
-
-
-            statement.executeQuery(query);
+            String query ="update adres set postcode =?, huisnummer=?, straat=?, woonplaats=?, reiziger_id=? where adres_id =?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setString(1, adres.getPostcode());
+            pst.setString(2, adres.getHuisnummer());
+            pst.setString(3, adres.getStraat());
+            pst.setString(4, adres.getWoonplaats());
+            pst.setInt(5, adres.getReiziger_id());
+            pst.setInt(6, adres.getId());
+            pst.executeQuery();
             return true;
 
         }catch (Exception e){

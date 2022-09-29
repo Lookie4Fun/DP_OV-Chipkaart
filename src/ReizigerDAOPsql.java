@@ -18,12 +18,16 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     @Override
     public boolean save(Reiziger reiziger) throws SQLException {
         try {
-            Statement statement = conn.createStatement();
-            String query = "" +
-                    "INSERT INTO reiziger"
+            String query = "INSERT INTO reiziger"
                     +"(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum)"
-                    +"values ('"+reiziger.getId()+"','"+reiziger.getVoorletters()+"','"+reiziger.getTussenvoegsel()+"','"+reiziger.getAchternaam()+"','"+reiziger.getGeboortedatum()+"')";
-            statement.executeQuery(query);
+                    +"values (?,?,?,?,?);";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, reiziger.getId());
+            pst.setString(2, reiziger.getVoorletters());
+            pst.setString(3, reiziger.getTussenvoegsel());
+            pst.setString(4, reiziger.getAchternaam());
+            pst.setDate(5, reiziger.getGeboortedatum());
+            pst.executeQuery();
             adresDAOPsql.save(reiziger.getAdres());
             ovChipkaartDAOsql.save(reiziger.getOVChipkaarten());
             return true;
@@ -35,11 +39,16 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     }
 
     @Override
-    public boolean update(Reiziger reiziger, String nieuwachternaam) {
+    public boolean update(Reiziger reiziger) {
         try {
-            Statement statement = conn.createStatement();
-            String query ="update reiziger set achternaam ='"+nieuwachternaam+"' where reiziger_id ='"+reiziger.getId()+"'";
-            statement.executeQuery(query);
+            String query ="update reiziger set voorletters =?, tussenvoegsel=?, achternaam=?, geboortedatum=? where reiziger_id =?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setString(1, reiziger.getVoorletters());
+            pst.setString(2, reiziger.getTussenvoegsel());
+            pst.setString(3, reiziger.getAchternaam());
+            pst.setDate(4, reiziger.getGeboortedatum());
+            pst.setInt(5, reiziger.getId());
+            pst.executeQuery();
             return true;
 
         }catch (Exception e){
@@ -51,10 +60,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     @Override
     public boolean delete(Reiziger reiziger) {
         try {
-            Statement statement = conn.createStatement();
-            String query ="DELETE FROM reiziger WHERE reiziger_id="+reiziger.getId()+";";
-
-            statement.executeQuery(query);
+            String query ="DELETE FROM reiziger WHERE reiziger_id=?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, reiziger.getId());
+            pst.executeQuery();
             return true;
 
         }catch (Exception e){
@@ -81,15 +90,17 @@ public class ReizigerDAOPsql implements ReizigerDAO{
         }
     }
 
+
     @Override
     public List<Reiziger> findByGbdatum(String datum) {
         try {
-            Statement statement = conn.createStatement();
-            String query ="select * from reiziger where geboortedatum ='"+datum+"'";
-            ResultSet result = statement.executeQuery(query);
+            String query ="select * from reiziger where geboortedatum =?;";
+            PreparedStatement pst = conn.prepareStatement(query);
+            Date datum2 = Date.valueOf(datum);
+            pst.setDate(1, datum2);
+            ResultSet result = pst.executeQuery();
             List<Reiziger> reizigers = new ArrayList<>();
             while (result.next()) {
-
                 Reiziger reiziger = new Reiziger(result.getInt("reiziger_id"), result.getString("voorletters"), result.getString("tussenvoegsel"), result.getString("achternaam"), result.getDate("geboortedatum"));
                 reizigers.add(reiziger);
             }
