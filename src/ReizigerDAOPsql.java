@@ -29,7 +29,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pst.setDate(5, reiziger.getGeboortedatum());
             pst.executeQuery();
             adresDAOPsql.save(reiziger.getAdres());
-            ovChipkaartDAOsql.save(reiziger.getOVChipkaarten());
+            for(OVChipkaart ovChipkaart : reiziger.getOVChipkaarten()){
+                ovChipkaartDAOsql.save(ovChipkaart);
+            }
+
             return true;
 
         }catch (Exception e){

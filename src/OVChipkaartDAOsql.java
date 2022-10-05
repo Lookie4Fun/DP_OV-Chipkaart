@@ -61,22 +61,20 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
     }
 
     @Override
-    public boolean save(List<OVChipkaart> kaarten) throws SQLException {
+    public boolean save(OVChipkaart kaart) throws SQLException {
             try {
-                for(OVChipkaart kaart : kaarten) {
-                    String query =
-                            "INSERT INTO ov_chipkaart"
-                                    + "(kaart_nummer, geldig_tot, klasse, saldo, reiziger_id)"
-                                    + "values (?,?,?,?,?)";
-                    PreparedStatement pst = conn.prepareStatement(query);
-                    pst.setInt(1, kaart.getKaart_nummer());
-                    pst.setDate(2, kaart.getGeldig_tot());
-                    pst.setInt(3, kaart.getKlasse());
-                    pst.setInt(4, kaart.getSaldo());
-                    pst.setInt(5, kaart.getReiziger_id());
+                String query =
+                        "INSERT INTO ov_chipkaart"
+                                + "(kaart_nummer, geldig_tot, klasse, saldo, reiziger_id)"
+                                + "values (?,?,?,?,?)";
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.setInt(1, kaart.getKaart_nummer());
+                pst.setDate(2, kaart.getGeldig_tot());
+                pst.setInt(3, kaart.getKlasse());
+                pst.setInt(4, kaart.getSaldo());
+                pst.setInt(5, kaart.getReiziger_id());
 
-                    pst.executeQuery();
-                }
+                pst.executeQuery();
                 return true;
             } catch (Exception e) {
                 System.out.println(e.getMessage());

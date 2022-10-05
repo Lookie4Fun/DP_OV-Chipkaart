@@ -158,12 +158,10 @@ public class Main {
         }
 
         // Maak een OVChipkaart aan en persisteer deze in de database
-        List<OVChipkaart> ovChipkaarten = new ArrayList<>();
         String kaartdatum = "2028-09-08";
         OVChipkaart ovChipkaart = new OVChipkaart(2403711,java.sql.Date.valueOf(kaartdatum),2,40,1);
         System.out.print("\n [Test] Eerst " + kaarten.size() + " kaarten, na OVChipkaartDAO.save() ");
-        ovChipkaarten.add(ovChipkaart);
-        ovdao.save(ovChipkaarten);
+        ovdao.save(ovChipkaart);
         kaarten = ovdao.findAll();
         System.out.println(kaarten.size() + " kaarten\n");
 
