@@ -7,7 +7,6 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
 
     Connection conn;
 
-
     public OVChipkaartDAOsql(Connection conn) {
         this.conn = conn;
     }
