@@ -11,7 +11,6 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
         this.conn = conn;
     }
 
-
     @Override
     public List<OVChipkaart> findAll() throws SQLException {
         List<OVChipkaart> kaarten = new ArrayList<>();
