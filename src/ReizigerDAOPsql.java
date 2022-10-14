@@ -49,6 +49,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pst.setDate(4, reiziger.getGeboortedatum());
             pst.setInt(5, reiziger.getId());
             pst.executeQuery();
+            adresDAOPsql.update(reiziger.getAdres());
+            for(OVChipkaart ovChipkaart : reiziger.getOVChipkaarten()){
+                ovChipkaartDAOsql.update(ovChipkaart);
+            }
             return true;
 
         }catch (Exception e){
@@ -60,10 +64,15 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     @Override
     public boolean delete(Reiziger reiziger) {
         try {
+            adresDAOPsql.delete(reiziger.getAdres());
+            for(OVChipkaart ovChipkaart : reiziger.getOVChipkaarten()){
+                ovChipkaartDAOsql.delete(ovChipkaart);
+            }
             String query ="DELETE FROM reiziger WHERE reiziger_id=?;";
             PreparedStatement pst = conn.prepareStatement(query);
             pst.setInt(1, reiziger.getId());
             pst.executeQuery();
+
             return true;
 
         }catch (Exception e){

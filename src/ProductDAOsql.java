@@ -1,7 +1,5 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +67,11 @@ public class ProductDAOsql implements ProductDAO{
             pst.setString(3, product.getBeschrijving());
             pst.setInt(4, product.getPrijs());
             pst.executeQuery();
+            try{
 
+            }catch (Exception e){
+                System.out.println(e);
+            }
             return true;
 
         }catch (Exception e){
@@ -81,15 +83,23 @@ public class ProductDAOsql implements ProductDAO{
     @Override
     public boolean update(Product product) {
         try {
-            String query ="update product set naam=?, beschrijving=?, prijs=? where product_nummer =?;";
-            PreparedStatement pst = conn.prepareStatement(query);
+            String productQuery ="update product set naam=?, beschrijving=?, prijs=? where product_nummer =?;";
+            PreparedStatement pst = conn.prepareStatement(productQuery);
             pst.setString(1, product.getNaam());
             pst.setString(2, product.getBeschrijving());
             pst.setInt(3, product.getPrijs());
             pst.setInt(4, product.getProduct_nummer());
             pst.executeQuery();
-            return true;
+            try {
+                String ov_chipkaart_productQuery ="update ov_chipkaart_product set last_update=? where product_nummer=?;";
+                PreparedStatement pst2 = conn.prepareStatement(ov_chipkaart_productQuery);
+                pst2.setDate(1, Date.valueOf(LocalDate.now()));
+                pst2.setInt(2, product.getProduct_nummer());
 
+            }catch (Exception e){
+                System.out.println(e);
+            }
+            return true;
         }catch (Exception e){
             System.out.println(e.getMessage());
             return false;
