@@ -67,11 +67,7 @@ public class ProductDAOsql implements ProductDAO{
             pst.setString(3, product.getBeschrijving());
             pst.setInt(4, product.getPrijs());
             pst.executeQuery();
-            try{
 
-            }catch (Exception e){
-                System.out.println(e);
-            }
             return true;
 
         }catch (Exception e){

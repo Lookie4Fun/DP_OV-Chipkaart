@@ -71,7 +71,6 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO{
                 pst.setInt(3, kaart.getKlasse());
                 pst.setInt(4, kaart.getSaldo());
                 pst.setInt(5, kaart.getReiziger_id());
-
                 pst.executeQuery();
                 return true;
             } catch (Exception e) {
