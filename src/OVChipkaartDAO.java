@@ -5,7 +5,7 @@ public interface OVChipkaartDAO {
 
     List<OVChipkaart> findAll() throws SQLException;
 
-    boolean save(List<OVChipkaart> kaart) throws SQLException;
+    boolean save(OVChipkaart kaart) throws SQLException;
 
     boolean update(OVChipkaart kaart);
 
