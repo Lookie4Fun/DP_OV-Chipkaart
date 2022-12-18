@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ProductDAOsql implements ProductDAO{
     private Connection conn;
+    private OVChipkaartDAOsql ovChipkaartDAOsql;
     public ProductDAOsql(Connection conn) {
         this.conn = conn;
     }
@@ -67,6 +68,17 @@ public class ProductDAOsql implements ProductDAO{
             pst.setString(3, product.getBeschrijving());
             pst.setInt(4, product.getPrijs());
             pst.executeQuery();
+
+            for (OVChipkaart ov : product.getOvChipkaarten()) {
+                ovChipkaartDAOsql.save(ov);
+                String query2 = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer) " +
+                        "VALUES (?, ?);";
+                PreparedStatement pst2 = conn.prepareStatement(query2);
+                pst2.setInt(1, ov.getKaart_nummer());
+                pst2.setInt(2, product.getProduct_nummer());
+                pst2.executeUpdate();
+                pst.close();
+            }
 
             return true;
 
