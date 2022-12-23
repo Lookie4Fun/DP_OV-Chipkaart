@@ -6,8 +6,10 @@ import java.util.List;
 public class ProductDAOsql implements ProductDAO{
     private Connection conn;
     private OVChipkaartDAOsql ovChipkaartDAOsql;
-    public ProductDAOsql(Connection conn) {
+    public ProductDAOsql(Connection conn, OVChipkaartDAOsql ovChipkaartDAOsql) {
         this.conn = conn;
+        this.ovChipkaartDAOsql = ovChipkaartDAOsql;
+
     }
 
     public List<Product> findAll() {
@@ -59,31 +61,37 @@ public class ProductDAOsql implements ProductDAO{
     @Override
     public boolean save(Product product) throws SQLException {
         try {
-            String query = "INSERT INTO product"
-                    +"(product_nummer, naam, beschrijving, prijs)"
-                    +"values (?,?,?,?);";
+            String query = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) VALUES (?, ?, ?, ?);";
             PreparedStatement pst = conn.prepareStatement(query);
             pst.setInt(1, product.getProduct_nummer());
             pst.setString(2, product.getNaam());
             pst.setString(3, product.getBeschrijving());
-            pst.setInt(4, product.getPrijs());
-            pst.executeQuery();
+            pst.setDouble(4, product.getPrijs());
+            pst.executeUpdate();
+            pst.close();
 
-            for (OVChipkaart ov : product.getOvChipkaarten()) {
-                ovChipkaartDAOsql.save(ov);
-                String query2 = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer) " +
-                        "VALUES (?, ?);";
+            for (OVChipkaart ovChipkaart : product.getOvChipkaarten()) {
+                String status = "";
+                if(ovChipkaart.getGeldig_tot().after(Date.valueOf(LocalDate.now()))){
+                    status = "actief";
+                }else {
+                    status = "verlopen";
+                }
+                ovChipkaartDAOsql.save(ovChipkaart);
+                String query2 = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer,status , last_update) VALUES (?, ?,?, ?);";
                 PreparedStatement pst2 = conn.prepareStatement(query2);
-                pst2.setInt(1, ov.getKaart_nummer());
+                pst2.setInt(1, ovChipkaart.getKaart_nummer());
                 pst2.setInt(2, product.getProduct_nummer());
+                pst2.setString(3, status);
+                pst2.setDate(4, Date.valueOf(LocalDate.now()));
                 pst2.executeUpdate();
                 pst.close();
             }
 
             return true;
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -97,15 +105,25 @@ public class ProductDAOsql implements ProductDAO{
             pst.setString(2, product.getBeschrijving());
             pst.setInt(3, product.getPrijs());
             pst.setInt(4, product.getProduct_nummer());
-            pst.executeQuery();
-            try {
-                String ov_chipkaart_productQuery ="update ov_chipkaart_product set last_update=? where product_nummer=?;";
-                PreparedStatement pst2 = conn.prepareStatement(ov_chipkaart_productQuery);
-                pst2.setDate(1, Date.valueOf(LocalDate.now()));
-                pst2.setInt(2, product.getProduct_nummer());
+            pst.executeUpdate();
+            pst.close();
 
-            }catch (Exception e){
-                System.out.println(e);
+            for (OVChipkaart ovChipkaart : product.getOvChipkaarten()) {
+                String status = "";
+                if(ovChipkaart.getGeldig_tot().after(Date.valueOf(LocalDate.now()))){
+                    status = "actief";
+                }else {
+                    status = "verlopen";
+                }
+                ovChipkaartDAOsql.save(ovChipkaart);
+                String query2 = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer,status , last_update) VALUES (?, ?,?, ?);";
+                PreparedStatement pst2 = conn.prepareStatement(query2);
+                pst2.setInt(1, ovChipkaart.getKaart_nummer());
+                pst2.setInt(2, product.getProduct_nummer());
+                pst2.setString(3, status);
+                pst2.setDate(4, Date.valueOf(LocalDate.now()));
+                pst2.executeUpdate();
+                pst.close();
             }
             return true;
         }catch (Exception e){
@@ -159,5 +177,4 @@ public class ProductDAOsql implements ProductDAO{
         }
         return producten;
     }
-
 }

@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,14 +11,13 @@ public class Main {
         OVChipkaartDAOsql ovChipkaartDAOsql = new OVChipkaartDAOsql(getConnection());
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(getConnection());
         ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(getConnection(),adresDAOPsql,ovChipkaartDAOsql);
-        ProductDAOsql productDAOsql = new ProductDAOsql(getConnection());
+        ProductDAOsql productDAOsql = new ProductDAOsql(getConnection(),ovChipkaartDAOsql);
 
         testReizigerDAO(reizigerDAOPsql);
         testAdresDAO(adresDAOPsql);
         testOVChipkaartDAO(ovChipkaartDAOsql);
         testProductDAO(productDAOsql);
         closeConnection(getConnection());
-
 
     }
 
@@ -89,7 +89,7 @@ public class Main {
         }
 
 
-        // Delete een reiziger uit de database
+//        //Delete een reiziger uit de database
 //        rdao.delete(sietske);
 //        System.out.println("\n[Test] resultaat na deleten van reiziger op adres met id 77");
 //        reizigers = rdao.findAll();
@@ -143,8 +143,6 @@ public class Main {
         ReizigerDAO reizigerDAO = new ReizigerDAOPsql(getConnection(),new AdresDAOPsql(getConnection()),new OVChipkaartDAOsql(getConnection()));
 
         System.out.println(adao.findByReiziger(reizigerDAO.findById(1)));
-
-
     }
 
     private static void testOVChipkaartDAO(OVChipkaartDAO ovdao)throws SQLException{
@@ -195,7 +193,6 @@ public class Main {
         for (OVChipkaart k : kaarten) {
             System.out.println(k);
         }
-
     }
 
     private static void testProductDAO(ProductDAO pdao) throws SQLException {
@@ -217,19 +214,23 @@ public class Main {
 
         // Update een product in de database
         System.out.println("[Test] resultaat voor en na updaten van product met productnummer 7");
-        Product updateProduct = new Product(7,"7 dagen Vertragings garantie", "7 dagen per week vertraging.", 150);
+        OVChipkaart chipkaart = new OVChipkaart(18326, java.sql.Date.valueOf("2022-12-23"), 2, 10, 6);
+        OVChipkaart chipkaart2 = new OVChipkaart(90537, java.sql.Date.valueOf("2022-12-23"), 2, 30, 6);
+        nieuwProduct.setOvChipkaarten(List.of(chipkaart, chipkaart2));
+        nieuwProduct.setPrijs(100);
+        nieuwProduct.setNaam("7 dagen Vertragings garantie");
         System.out.println("VOOR UPDATE");
         for (Product p : producten) {
             System.out.println(p);
         }
-        pdao.update(updateProduct);
+        pdao.update(nieuwProduct);
         System.out.println("\nNA UPDATE");
         producten = pdao.findAll();
         for (Product p : producten) {
             System.out.println(p);
         }
 
-        // Delete een adres uit de database
+        // Delete een product uit de database
         pdao.delete(nieuwProduct);
         System.out.println("\n[Test] resultaat na deleten van product met productnummer 7");
         producten = pdao.findAll();
